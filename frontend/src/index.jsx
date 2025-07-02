@@ -1,18 +1,30 @@
-// frontend/src/index.jsx (Absolute Minimum Debug Version)
+// frontend/src/index.jsx (Test 1: Re-introducing Router and Polaris)
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+
 import App from './App.jsx';
+import PolarisProvider from './providers/PolarisProvider.jsx';
+import QueryProvider from './providers/QueryProvider.jsx';
 
-// We are temporarily removing ALL providers to test the absolute core rendering.
-// No Polaris, no App Bridge, no Router, not even the CSS import.
+// Import Polaris base styles
+import '@shopify/polaris/build/esm/styles.css';
+import './styles/main.css';
 
-console.log("--- Absolute Minimum index.jsx is running ---");
+console.log("--- Test 1: Re-introducing Router and Polaris ---");
 
 const rootElement = document.getElementById('root');
 const root = ReactDOM.createRoot(rootElement);
 
 root.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      {/* We are NOT adding AppBridgeProvider yet */}
+      <QueryProvider>
+        <PolarisProvider>
+          <App />
+        </PolarisProvider>
+      </QueryProvider>
+    </BrowserRouter>
   </React.StrictMode>,
 );
