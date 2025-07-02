@@ -1,14 +1,11 @@
-// frontend/src/Routes.jsx
-// This component defines all the client-side routes for the application.
-// It maps URL paths to their corresponding page components.
-
+// frontend/src/Routes.jsx (Final Version)
 import { Routes, Route } from 'react-router-dom';
 import DashboardPage from './pages/Dashboard.jsx';
 import ProductsPage from './pages/Products.jsx';
 import AnalyticsPage from './pages/Analytics.jsx';
 import SettingsPage from './pages/Settings.jsx';
 import AIQueriesPage from './pages/AIQueries.jsx';
-import LoginPage from './pages/Login.jsx';
+import ExitIframe from './pages/ExitIframe.jsx';
 
 export default function AppRoutes() {
   return (
@@ -19,8 +16,8 @@ export default function AppRoutes() {
       <Route path="/settings" element={<SettingsPage />} />
       <Route path="/ai-queries" element={<AIQueriesPage />} />
       
-      {/* Fallback/Login page if no shop context is found */}
-      <Route path="/login" element={<LoginPage />} />
+      {/* This new route is essential for the OAuth flow to complete correctly. */}
+      <Route path="/exitiframe" element={<ExitIframe />} />
     </Routes>
   );
 }
