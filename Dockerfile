@@ -1,25 +1,26 @@
 # Stage 1: Frontend Builder
 # This stage builds the static frontend assets.
 FROM node:18.18.0-slim AS frontend-builder
+
+# Set the working directory for the entire frontend stage.
 WORKDIR /app
 
-# --- FINAL FIX ---
-# 1. Declare a build-time argument. Railway will automatically pass the
-#    environment variable with the same name to this argument.
+# Declare the build-time argument that Railway will provide.
 ARG VITE_SHOPIFY_API_KEY
 
-# Copy the frontend source code into the build stage
-COPY frontend/ .
+# Copy package files first to leverage Docker's cache.
+# This means npm install will only run if these files change.
+COPY frontend/package*.json ./
 
-# Set the working directory to the frontend folder
-WORKDIR /app/frontend
-
-# Install dependencies
+# Install all frontend dependencies.
 RUN npm install
 
-# 2. When running the build, explicitly set the environment variable
-#    for the build command, using the value from the build argument.
-#    This is the most reliable way to pass the variable.
+# Now copy the rest of the frontend source code.
+COPY frontend/ .
+
+# Run the build command. We pass the API key as an environment variable
+# directly to this command to ensure it's available.
+# The build output will be created in /app/dist.
 RUN VITE_SHOPIFY_API_KEY=$VITE_SHOPIFY_API_KEY npm run build
 
 # Stage 2: Backend Builder
@@ -36,9 +37,13 @@ WORKDIR /app
 
 # Copy the prepared backend (source + node_modules) from the backend-builder stage.
 COPY --from=backend-builder /app/ .
+
 # Copy the built frontend assets from the frontend-builder stage.
-COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
+# The source is /app/dist and the destination is ./frontend/dist, which is correct
+# for our Express server to find the files.
+COPY --from=frontend-builder /app/dist ./frontend/dist
 
 EXPOSE 8081
+
 # The final command to run the server.
 CMD ["node", "server.js"]
