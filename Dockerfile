@@ -7,13 +7,19 @@ WORKDIR /app
 # 1. Declare a build-time argument. Railway will automatically pass the
 #    environment variable with the same name to this argument.
 ARG VITE_SHOPIFY_API_KEY
-# --- END FIX ---
 
+# Copy the frontend source code into the build stage
 COPY frontend/ .
+
+# Set the working directory to the frontend folder
 WORKDIR /app/frontend
+
+# Install dependencies
 RUN npm install
+
 # 2. When running the build, explicitly set the environment variable
 #    for the build command, using the value from the build argument.
+#    This is the most reliable way to pass the variable.
 RUN VITE_SHOPIFY_API_KEY=$VITE_SHOPIFY_API_KEY npm run build
 
 # Stage 2: Backend Builder
