@@ -1,10 +1,11 @@
-// frontend/src/providers/AppBridgeProvider.jsx (Final Version)
-// This provider is responsible for initializing the Shopify App Bridge.
+// frontend/src/providers/AppBridgeProvider.jsx (Final Simplified Version)
+// This version trusts the Shopify App Bridge library to handle its own initialization,
+// which is the modern and correct approach for embedded apps.
 
 import { Provider } from '@shopify/app-bridge-react';
-import { useMemo, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Page, Spinner, Banner, Text } from '@shopify/polaris';
+import { Page, Spinner } from '@shopify/polaris';
+import { useEffect, useState } from 'react';
 
 function AppBridgeProvider({ children }) {
   const location = useLocation();
@@ -12,35 +13,24 @@ function AppBridgeProvider({ children }) {
   const [appBridgeConfig, setAppBridgeConfig] = useState(null);
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const shop = searchParams.get('shop');
-    const host = searchParams.get('host');
-
-    // The VITE_SHOPIFY_API_KEY must be set in the Railway environment variables
+    // The host is now automatically detected by App Bridge when embedded.
+    // We only need to provide our API key.
     const apiKey = import.meta.env.VITE_SHOPIFY_API_KEY;
 
-    if (host && shop && apiKey) {
-      try {
-        setAppBridgeConfig({
-          apiKey,
-          host: atob(host), // Decode the base64-encoded host
-          forceRedirect: true,
-        });
-      } catch (e) {
-        console.error("Failed to decode host parameter:", e);
-        setAppBridgeConfig(false); // Set to false to indicate an error
-      }
+    if (apiKey) {
+      setAppBridgeConfig({
+        apiKey,
+        // By not providing a 'host', we allow the library to detect it automatically.
+        forceRedirect: true,
+      });
     } else {
-      // If parameters are missing, it's likely not embedded in Shopify.
-      // We will redirect to a login page.
-      if (location.pathname !== '/login') {
-        navigate('/login');
-      }
+      // This case should not happen if VITE_SHOPIFY_API_KEY is set in Railway.
+      console.error("VITE_SHOPIFY_API_KEY is not defined!");
     }
-  }, [location.search, navigate, location.pathname]);
+  }, []);
 
-  // While waiting for the configuration to be determined
-  if (appBridgeConfig === null) {
+  // Show a loader while the config is being prepared.
+  if (!appBridgeConfig) {
     return (
       <Page>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -50,22 +40,10 @@ function AppBridgeProvider({ children }) {
     );
   }
 
-  // If the configuration is valid, provide the App Bridge context
-  if (appBridgeConfig) {
-    return (
-      <Provider config={appBridgeConfig} router={{ location, navigate }}>
-        {children}
-      </Provider>
-    );
-  }
-
-  // If the configuration is invalid (e.g., failed to decode host), show an error.
   return (
-      <Page>
-          <Banner title="Application Error" tone="critical">
-              <p>Could not initialize the application. The host parameter is invalid.</p>
-          </Banner>
-      </Page>
+    <Provider config={appBridgeConfig} router={{ location, navigate }}>
+      {children}
+    </Provider>
   );
 }
 

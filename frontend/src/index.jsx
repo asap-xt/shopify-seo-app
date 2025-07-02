@@ -8,7 +8,7 @@ import AppBridgeProvider from './providers/AppBridgeProvider.jsx';
 import PolarisProvider from './providers/PolarisProvider.jsx';
 import QueryProvider from './providers/QueryProvider.jsx';
 
-// Import i18n configuration
+// Import i18n configuration to initialize it
 import './i18n';
 
 // Import Shopify Polaris base styles
