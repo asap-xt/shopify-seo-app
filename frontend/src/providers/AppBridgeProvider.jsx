@@ -1,78 +1,67 @@
-// frontend/src/providers/AppBridgeProvider.jsx (Final Version)
-// This provider is responsible for initializing the Shopify App Bridge.
+    // frontend/src/providers/AppBridgeProvider.jsx (Final Simplified Version)
+    // This version trusts the Shopify App Bridge library to handle its own initialization.
 
-import { Provider } from '@shopify/app-bridge-react';
-import { useMemo } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Page, Banner, Spinner } from '@shopify/polaris';
+    import { Provider } from '@shopify/app-bridge-react';
+    import { useLocation, useNavigate } from 'react-router-dom';
+    import { Page, Spinner, Banner } from '@shopify/polaris';
+    import { useMemo } from 'react';
 
-function AppBridgeProvider({ children }) {
-  const location = useLocation();
-  const navigate = useNavigate();
+    function AppBridgeProvider({ children }) {
+      const location = useLocation();
+      const navigate = useNavigate();
 
-  // useMemo will re-evaluate if the URL search string changes.
-  const appBridgeConfig = useMemo(() => {
-    const params = new URLSearchParams(location.search);
-    const shop = params.get('shop');
-    const host = params.get('host');
+      const appBridgeConfig = useMemo(() => {
+        const host = new URLSearchParams(location.search).get('host');
+        const apiKey = import.meta.env.VITE_SHOPIFY_API_KEY;
 
-    const apiKey = import.meta.env.VITE_SHOPIFY_API_KEY;
-
-    if (host && shop && apiKey) {
-      // This is the case during or immediately after the OAuth redirect.
-      try {
-        return {
-          apiKey,
-          host: atob(host),
-          forceRedirect: true,
-        };
-      } catch (e) {
-        console.error("Failed to decode host parameter:", e);
-        return 'invalid'; // Return a specific error state
-      }
-    }
-    
-    // This is the case when the app is opened from the Apps list in Shopify Admin.
-    // The 'host' parameter is not in the URL, but App Bridge can detect it
-    // because it's running inside the Shopify iframe.
-    if (apiKey && !host) {
-        return {
+        if (apiKey && host) {
+          return {
             apiKey,
-            forceRedirect: true,
-        };
+            host: atob(host), // Decode the base64-encoded host
+            forceRedirect: false, // Let the app handle redirects
+          };
+        }
+        
+        // When opened from the Apps list, App Bridge can often initialize without the host param.
+        if (apiKey && !host) {
+            return {
+                apiKey,
+                forceRedirect: false,
+            };
+        }
+
+        return null;
+      }, [location.search]);
+
+      // If the API key is missing from the environment, we can't proceed.
+      if (!import.meta.env.VITE_SHOPIFY_API_KEY) {
+        return (
+          <Page>
+            <Banner title="Application Configuration Error" tone="critical">
+              <p>The VITE_SHOPIFY_API_KEY environment variable is not set. Please check your Railway deployment variables.</p>
+            </Banner>
+          </Page>
+        );
+      }
+
+      // If the host is missing from the URL, it means we are not inside Shopify.
+      // This is the state that causes the blank screen.
+      if (!new URLSearchParams(location.search).get('host')) {
+        return (
+             <Page>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                    <Spinner />
+                </div>
+             </Page>
+        );
+      }
+
+      return (
+        <Provider config={appBridgeConfig} router={{ location, navigate }}>
+          {children}
+        </Provider>
+      );
     }
 
-    return null;
-  }, [location.search]);
-
-  // If the config is still being determined, show a loader.
-  if (appBridgeConfig === null) {
-    return (
-      <Page>
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-          <Spinner />
-        </div>
-      </Page>
-    );
-  }
-
-  // If the configuration is valid, provide the App Bridge context.
-  if (appBridgeConfig !== 'invalid') {
-    return (
-      <Provider config={appBridgeConfig} router={{ location, navigate }}>
-        {children}
-      </Provider>
-    );
-  }
-
-  // If the host parameter was invalid, show an error.
-  return (
-    <Page>
-      <Banner title="Application Error" tone="critical">
-        <p>Could not initialize the application. The host parameter from Shopify is invalid.</p>
-      </Banner>
-    </Page>
-  );
-}
-
-export default AppBridgeProvider;
+    export default AppBridgeProvider;
+    
