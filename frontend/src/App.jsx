@@ -3,7 +3,7 @@
 
 import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { AppProvider as PolarisProvider, Frame, Navigation, Page, Banner } from '@shopify/polaris';
+import { AppProvider as PolarisProvider, Frame, Navigation, Page, Banner, Spinner } from '@shopify/polaris';
 import { Provider as AppBridgeProvider } from '@shopify/app-bridge-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import AppRoutes from './Routes';
@@ -35,31 +35,36 @@ function App() {
   const { t } = useTranslation();
 
   // This is the most robust way to get the config.
-  // We only need to provide the API key. App Bridge will detect the host automatically.
+  // It reads directly from the browser's URL when the component first loads.
   const appBridgeConfig = useMemo(() => {
+    const params = new URLSearchParams(window.location.search);
+    const host = params.get('host');
     const apiKey = import.meta.env.VITE_SHOPIFY_API_KEY;
-    const host = new URLSearchParams(location.search).get('host');
 
-    if (apiKey) {
-      return {
-        apiKey,
-        // If the host is present in the URL (during OAuth), we use it.
-        // If not (when opened from the Apps list), App Bridge will detect it.
-        host: host ? atob(host) : undefined,
-        forceRedirect: true,
-      };
+    if (host && apiKey) {
+      try {
+        return {
+          apiKey,
+          host: atob(host),
+          forceRedirect: true,
+        };
+      } catch (e) {
+        console.error("Invalid host parameter:", e);
+        return null;
+      }
     }
     return null;
-  }, [location.search]);
+  }, []); // The empty dependency array ensures this runs only once.
 
-  // If the API key is missing, render an error.
+  // If the app is not embedded in Shopify, it will not have the 'host' parameter.
+  // We show a spinner while waiting for Shopify to reload the page with the correct context.
   if (!appBridgeConfig) {
     return (
       <PolarisProvider i18n={enPolaris}>
         <Page>
-          <Banner title="Configuration Error" tone="critical">
-            <p>This application cannot start because the <strong>VITE_SHOPIFY_API_KEY</strong> environment variable is not set correctly in your Railway project.</p>
-          </Banner>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            <Spinner />
+          </div>
         </Page>
       </PolarisProvider>
     );

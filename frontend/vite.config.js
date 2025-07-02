@@ -21,4 +21,11 @@ export default defineConfig({
   build: {
     outDir: 'dist'
   }
+server: {
+  proxy: {
+    '/auth': 'http://localhost:3000',
+    '/graphql': 'http://localhost:3000',
+  }
+}
+
 })
