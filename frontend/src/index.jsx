@@ -1,33 +1,22 @@
-// frontend/src/index.jsx (Restored to Full Version)
+// frontend/src/index.jsx (Final Debug Version)
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
-
 import App from './App.jsx';
-import AppBridgeProvider from './providers/AppBridgeProvider.jsx';
-import PolarisProvider from './providers/PolarisProvider.jsx';
-import QueryProvider from './providers/QueryProvider.jsx';
 
-// Import i18n configuration to initialize it
-import './i18n';
-
-// Import Shopify Polaris base styles
-import '@shopify/polaris/build/esm/styles.css';
-import './styles/main.css';
+// This log MUST appear in the correct browser console.
+console.log('[AI SEO App] index.jsx is executing...');
 
 const rootElement = document.getElementById('root');
-const root = ReactDOM.createRoot(rootElement);
 
-root.render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <QueryProvider>
-        <AppBridgeProvider>
-          <PolarisProvider>
-            <App />
-          </PolarisProvider>
-        </AppBridgeProvider>
-      </QueryProvider>
-    </BrowserRouter>
-  </React.StrictMode>,
-);
+if (rootElement) {
+  console.log('[AI SEO App] Found root element. Mounting React app...');
+  const root = ReactDOM.createRoot(rootElement);
+  root.render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
+} else {
+  // This will tell us if the HTML is wrong.
+  console.error('[AI SEO App] FATAL: Could not find root element with id="root". React cannot mount.');
+}
