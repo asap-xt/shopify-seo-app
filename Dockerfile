@@ -1,3 +1,4 @@
+# Force commit by adding a new comment at the top
 # Stage 1: Frontend Builder
 # This stage builds the static frontend assets.
 FROM node:18.18.0-slim AS frontend-builder
