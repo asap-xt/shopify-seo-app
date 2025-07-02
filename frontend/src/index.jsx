@@ -1,9 +1,10 @@
-// frontend/src/index.jsx (Test 1: Re-introducing Router and Polaris)
+// frontend/src/index.jsx (Final Version)
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 
 import App from './App.jsx';
+import AppBridgeProvider from './providers/AppBridgeProvider.jsx';
 import PolarisProvider from './providers/PolarisProvider.jsx';
 import QueryProvider from './providers/QueryProvider.jsx';
 
@@ -14,19 +15,18 @@ import './i18n';
 import '@shopify/polaris/build/esm/styles.css';
 import './styles/main.css';
 
-console.log("--- Test 1: Re-introducing Router and Polaris ---");
-
 const rootElement = document.getElementById('root');
 const root = ReactDOM.createRoot(rootElement);
 
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      {/* We are NOT adding AppBridgeProvider yet */}
       <QueryProvider>
-        <PolarisProvider>
-          <App />
-        </PolarisProvider>
+        <AppBridgeProvider>
+          <PolarisProvider>
+            <App />
+          </PolarisProvider>
+        </AppBridgeProvider>
       </QueryProvider>
     </BrowserRouter>
   </React.StrictMode>,
