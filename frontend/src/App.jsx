@@ -1,58 +1,90 @@
-// frontend/src/App.jsx (Final "Smart" Diagnostic Version)
-// This component has ZERO dependencies and will render a diagnostic panel.
+// frontend/src/App.jsx (Final "Smart" Version)
+// This single component now handles initialization and renders the entire app.
 
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { AppProvider as PolarisProvider, Frame, Navigation, Page, Banner } from '@shopify/polaris';
+import { Provider as AppBridgeProvider } from '@shopify/app-bridge-react';
+import AppRoutes from './Routes';
+import QueryProvider from './providers/QueryProvider'; // We still need this for data fetching
+
+// Import Polaris styles and i18n
+import '@shopify/polaris/build/esm/styles.css';
+import './i18n';
+import enPolaris from '@shopify/polaris/locales/en.json';
+
+// Import icons and other components
+import { HomeIcon, ProductIcon, NoteIcon, SettingsIcon, ChatIcon } from '@shopify/polaris-icons';
+import { useTranslation } from 'react-i18next';
+import TopBarMarkup from './components/TopBar.jsx';
 
 function App() {
-  // This is the most robust way to get the config.
-  // It reads directly from the browser's URL when the component first loads.
-  const diagnosticData = useMemo(() => {
-    const params = new URLSearchParams(window.location.search);
-    return {
-      shop: params.get('shop'),
-      host: params.get('host'),
-      apiKey: import.meta.env.VITE_SHOPIFY_API_KEY,
-      fullUrl: window.location.href, // Get the full URL for inspection
-    };
-  }, []); // The empty dependency array ensures this runs only once.
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { t } = useTranslation();
 
-  const renderValue = (label, value, isMissing) => (
-    <div style={{ marginBottom: '15px' }}>
-      <p style={{ margin: 0, fontWeight: 'bold' }}>{label}:</p>
-      <pre style={{
-        margin: '5px 0',
-        padding: '10px',
-        background: '#f0f0f0',
-        border: '1px solid #ccc',
-        borderRadius: '4px',
-        color: isMissing ? 'red' : 'green',
-        wordBreak: 'break-all',
-        whiteSpace: 'pre-wrap',
-      }}>
-        {value || (isMissing ? 'MISSING!' : 'EMPTY')}
-      </pre>
-    </div>
+  // This is the most robust way to get the config.
+  // We only need to provide the API key. App Bridge will detect the host automatically.
+  const appBridgeConfig = useMemo(() => {
+    const apiKey = import.meta.env.VITE_SHOPIFY_API_KEY;
+    const host = new URLSearchParams(location.search).get('host');
+
+    if (host && apiKey) {
+      return {
+        apiKey,
+        host: atob(host),
+        forceRedirect: true,
+      };
+    }
+    // This case handles when the app is opened from the Shopify Admin Apps list
+    // after the initial installation. App Bridge will detect the context.
+    if (apiKey && !host) {
+        return {
+            apiKey,
+            forceRedirect: true,
+        }
+    }
+    return null;
+  }, [location.search]);
+
+  // If the API key is missing, render an error.
+  if (!appBridgeConfig) {
+    return (
+      <PolarisProvider i18n={enPolaris}>
+        <Page>
+          <Banner title="Configuration Error" tone="critical">
+            <p>This application cannot start because the <strong>VITE_SHOPIFY_API_KEY</strong> environment variable is not set correctly in your Railway project.</p>
+          </Banner>
+        </Page>
+      </PolarisProvider>
+    );
+  }
+
+  // If we have a valid config, render the full application.
+  const navigationMarkup = (
+    <Navigation location={location.pathname}>
+      <Navigation.Section
+        items={[
+          { url: '/', label: t('navigation.dashboard'), icon: HomeIcon, selected: location.pathname === '/', onClick: () => navigate('/') },
+          { url: '/products', label: t('navigation.products'), icon: ProductIcon, selected: location.pathname.startsWith('/products'), onClick: () => navigate('/products') },
+          { url: '/ai-queries', label: t('navigation.ai_queries'), icon: ChatIcon, selected: location.pathname.startsWith('/ai-queries'), onClick: () => navigate('/ai-queries') },
+          { url: '/analytics', label: t('navigation.analytics'), icon: NoteIcon, selected: location.pathname.startsWith('/analytics'), onClick: () => navigate('/analytics') },
+          { url: '/settings', label: t('navigation.settings'), icon: SettingsIcon, selected: location.pathname.startsWith('/settings'), onClick: () => navigate('/settings') },
+        ]}
+      />
+    </Navigation>
   );
 
   return (
-    <div style={{
-      padding: '20px',
-      fontFamily: 'monospace',
-      border: '5px solid #008060',
-      margin: '20px',
-      backgroundColor: 'white'
-    }}>
-      <h1 style={{ fontSize: '24px' }}>App Diagnostics</h1>
-      <p>This screen shows the parameters received by the frontend. Please take a screenshot of this and send it back.</p>
-      <hr style={{ margin: '20px 0' }} />
-      {renderValue('Full URL', diagnosticData.fullUrl)}
-      {renderValue('Parsed "shop"', diagnosticData.shop, !diagnosticData.shop)}
-      {renderValue('Parsed "host"', diagnosticData.host, !diagnosticData.host)}
-      {renderValue('VITE_SHOPIFY_API_KEY', diagnosticData.apiKey, !diagnosticData.apiKey)}
-      <hr style={{ margin: '20px 0' }} />
-      <p>If all three values above are present, the problem is resolved. We can then restore the main application.</p>
-      <p>If any value is 'MISSING!', it needs to be fixed in the server configuration or Shopify Partner settings.</p>
-    </div>
+    <PolarisProvider i18n={enPolaris}>
+      <QueryProvider>
+        <AppBridgeProvider config={appBridgeConfig} router={{ location, navigate }}>
+          <Frame topBar={<TopBarMarkup />} navigation={navigationMarkup}>
+            <AppRoutes />
+          </Frame>
+        </AppBridgeProvider>
+      </QueryProvider>
+    </PolarisProvider>
   );
 }
 

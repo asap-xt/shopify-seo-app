@@ -1,22 +1,19 @@
-// frontend/src/index.jsx (Final Diagnostic Version)
+// frontend/src/index.jsx (Final Simplified Version)
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 import App from './App.jsx';
 
-// This log MUST appear in the correct browser console.
-console.log('[AI SEO App] index.jsx is executing...');
+// Import main CSS file
+import './styles/main.css';
 
 const rootElement = document.getElementById('root');
+const root = ReactDOM.createRoot(rootElement);
 
-if (rootElement) {
-  console.log('[AI SEO App] Found root element. Mounting React app...');
-  const root = ReactDOM.createRoot(rootElement);
-  root.render(
-    <React.StrictMode>
+root.render(
+  <React.StrictMode>
+    <BrowserRouter>
       <App />
-    </React.StrictMode>
-  );
-} else {
-  // This will tell us if the HTML is wrong.
-  console.error('[AI SEO App] FATAL: Could not find root element with id="root". React cannot mount.');
-}
+    </BrowserRouter>
+  </React.StrictMode>
+);
