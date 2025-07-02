@@ -1,34 +1,34 @@
 // frontend/src/providers/AppBridgeProvider.jsx (Final Simplified Version)
-// This version trusts the Shopify App Bridge library to handle its own initialization.
+// This version trusts the Shopify App Bridge library to handle its own initialization,
+// which is the modern and correct approach for embedded apps.
 
 import { Provider } from '@shopify/app-bridge-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Page, Spinner } from '@shopify/polaris';
-import { useEffect, useState, useMemo } from 'react';
+import { useMemo } from 'react';
 
 function AppBridgeProvider({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
-  
+
+  // This is the most robust way to get the config.
+  // We only need to provide the API key. App Bridge will detect the host automatically
+  // when the app is embedded inside the Shopify Admin.
   const appBridgeConfig = useMemo(() => {
     const apiKey = import.meta.env.VITE_SHOPIFY_API_KEY;
     const host = new URLSearchParams(location.search).get('host');
 
-    if (apiKey && host) {
+    if (apiKey) {
       return {
         apiKey,
-        host: atob(host),
+        // If the host is present in the URL (during OAuth), we use it.
+        // If not (when opened from the Apps list), App Bridge will detect it.
+        host: host ? atob(host) : undefined,
         forceRedirect: true,
       };
     }
-    // If the app is opened from the Apps list, App Bridge can initialize without the host param
-    // as long as it's embedded correctly.
-    if (apiKey && !host) {
-        return {
-            apiKey,
-            forceRedirect: true,
-        };
-    }
+    // This case should not happen if VITE_SHOPIFY_API_KEY is set correctly.
+    console.error("VITE_SHOPIFY_API_KEY is not defined!");
     return null;
   }, [location.search]);
 
@@ -43,6 +43,7 @@ function AppBridgeProvider({ children }) {
     );
   }
 
+  // Once the config is ready, render the App Bridge Provider with the main app inside.
   return (
     <Provider config={appBridgeConfig} router={{ location, navigate }}>
       {children}
