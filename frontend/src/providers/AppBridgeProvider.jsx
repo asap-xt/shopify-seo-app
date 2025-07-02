@@ -1,39 +1,52 @@
-// frontend/src/providers/AppBridgeProvider.jsx (Final Simplified Version)
-// This version trusts the Shopify App Bridge library to handle its own initialization,
-// which is the modern and correct approach for embedded apps.
+// frontend/src/providers/AppBridgeProvider.jsx (Final Version)
+// This provider is responsible for initializing the Shopify App Bridge.
 
 import { Provider } from '@shopify/app-bridge-react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Page, Spinner } from '@shopify/polaris';
 import { useMemo } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Page, Banner, Spinner } from '@shopify/polaris';
 
 function AppBridgeProvider({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // This is the most robust way to get the config.
-  // We only need to provide the API key. App Bridge will detect the host automatically
-  // when the app is embedded inside the Shopify Admin.
+  // useMemo will re-evaluate if the URL search string changes.
   const appBridgeConfig = useMemo(() => {
-    const apiKey = import.meta.env.VITE_SHOPIFY_API_KEY;
-    const host = new URLSearchParams(location.search).get('host');
+    const params = new URLSearchParams(location.search);
+    const shop = params.get('shop');
+    const host = params.get('host');
 
-    if (apiKey) {
-      return {
-        apiKey,
-        // If the host is present in the URL (during OAuth), we use it.
-        // If not (when opened from the Apps list), App Bridge will detect it.
-        host: host ? atob(host) : undefined,
-        forceRedirect: true,
-      };
+    const apiKey = import.meta.env.VITE_SHOPIFY_API_KEY;
+
+    if (host && shop && apiKey) {
+      // This is the case during or immediately after the OAuth redirect.
+      try {
+        return {
+          apiKey,
+          host: atob(host),
+          forceRedirect: true,
+        };
+      } catch (e) {
+        console.error("Failed to decode host parameter:", e);
+        return 'invalid'; // Return a specific error state
+      }
     }
-    // This case should not happen if VITE_SHOPIFY_API_KEY is set correctly.
-    console.error("VITE_SHOPIFY_API_KEY is not defined!");
+    
+    // This is the case when the app is opened from the Apps list in Shopify Admin.
+    // The 'host' parameter is not in the URL, but App Bridge can detect it
+    // because it's running inside the Shopify iframe.
+    if (apiKey && !host) {
+        return {
+            apiKey,
+            forceRedirect: true,
+        };
+    }
+
     return null;
   }, [location.search]);
 
-  // If the API key is missing, we can't proceed.
-  if (!appBridgeConfig) {
+  // If the config is still being determined, show a loader.
+  if (appBridgeConfig === null) {
     return (
       <Page>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -43,11 +56,22 @@ function AppBridgeProvider({ children }) {
     );
   }
 
-  // Once the config is ready, render the App Bridge Provider with the main app inside.
+  // If the configuration is valid, provide the App Bridge context.
+  if (appBridgeConfig !== 'invalid') {
+    return (
+      <Provider config={appBridgeConfig} router={{ location, navigate }}>
+        {children}
+      </Provider>
+    );
+  }
+
+  // If the host parameter was invalid, show an error.
   return (
-    <Provider config={appBridgeConfig} router={{ location, navigate }}>
-      {children}
-    </Provider>
+    <Page>
+      <Banner title="Application Error" tone="critical">
+        <p>Could not initialize the application. The host parameter from Shopify is invalid.</p>
+      </Banner>
+    </Page>
   );
 }
 

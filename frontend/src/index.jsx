@@ -1,22 +1,33 @@
-// frontend/src/index.jsx (Final Diagnostic Version)
+// frontend/src/index.jsx (Final Version)
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App.jsx';
+import { BrowserRouter } from 'react-router-dom';
 
-// This log MUST appear in the correct browser console.
-console.log('[AI SEO App] index.jsx is executing...');
+import App from './App.jsx';
+import AppBridgeProvider from './providers/AppBridgeProvider.jsx';
+import PolarisProvider from './providers/PolarisProvider.jsx';
+import QueryProvider from './providers/QueryProvider.jsx';
+
+// Import i18n configuration to initialize it
+import './i18n';
+
+// Import Shopify Polaris base styles
+import '@shopify/polaris/build/esm/styles.css';
+import './styles/main.css';
 
 const rootElement = document.getElementById('root');
+const root = ReactDOM.createRoot(rootElement);
 
-if (rootElement) {
-  console.log('[AI SEO App] Found root element. Mounting React app...');
-  const root = ReactDOM.createRoot(rootElement);
-  root.render(
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  );
-} else {
-  // This will tell us if the HTML is wrong.
-  console.error('[AI SEO App] FATAL: Could not find root element with id="root". React cannot mount.');
-}
+root.render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <QueryProvider>
+        <AppBridgeProvider>
+          <PolarisProvider>
+            <App />
+          </PolarisProvider>
+        </AppBridgeProvider>
+      </QueryProvider>
+    </BrowserRouter>
+  </React.StrictMode>,
+);
