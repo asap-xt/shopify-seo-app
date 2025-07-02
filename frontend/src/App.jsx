@@ -1,26 +1,75 @@
-// frontend/src/App.jsx (Test 1: Testing Polaris rendering)
+// frontend/src/App.jsx (Restored to Full Version)
 
-import { Page, Text, Card } from '@shopify/polaris';
+import { Frame, Navigation } from '@shopify/polaris';
+// All icons have been verified and corrected.
+import {
+  HomeIcon,
+  ProductIcon,
+  NoteIcon,
+  SettingsIcon,
+  ChatIcon,
+} from '@shopify/polaris-icons';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import AppRoutes from './Routes';
+import TopBarMarkup from './components/TopBar.jsx';
 
 function App() {
-  console.log("--- Test 1: App.jsx with Polaris is rendering ---");
+  const { t } = useTranslation();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const navigationMarkup = (
+    <Navigation location={location.pathname}>
+      <Navigation.Section
+        items={[
+          {
+            url: '/',
+            label: t('navigation.dashboard'),
+            icon: HomeIcon,
+            selected: location.pathname === '/',
+            onClick: () => navigate('/'),
+          },
+          {
+            url: '/products',
+            label: t('navigation.products'),
+            icon: ProductIcon,
+            selected: location.pathname.startsWith('/products'),
+            onClick: () => navigate('/products'),
+          },
+          {
+            url: '/ai-queries',
+            label: t('navigation.ai_queries'),
+            icon: ChatIcon,
+            selected: location.pathname.startsWith('/ai-queries'),
+            onClick: () => navigate('/ai-queries'),
+          },
+          {
+            url: '/analytics',
+            label: t('navigation.analytics'),
+            icon: NoteIcon,
+            selected: location.pathname.startsWith('/analytics'),
+            onClick: () => navigate('/analytics'),
+          },
+          {
+            url: '/settings',
+            label: t('navigation.settings'),
+            icon: SettingsIcon,
+            selected: location.pathname.startsWith('/settings'),
+            onClick: () => navigate('/settings'),
+          },
+        ]}
+      />
+    </Navigation>
+  );
 
   return (
-    <Page title="Polaris Тест">
-      <Card>
-        <div style={{ padding: '20px' }}>
-          <Text variant="headingLg" as="h1">
-            Polaris работи!
-          </Text>
-          <p>
-            Ако виждате тази страница, значи проблемът не е в React Router или Polaris.
-          </p>
-          <p>
-            Следващата стъпка е да добавим AppBridgeProvider, който е най-вероятният "виновник".
-          </p>
-        </div>
-      </Card>
-    </Page>
+    <Frame
+      topBar={<TopBarMarkup />}
+      navigation={navigationMarkup}
+    >
+      <AppRoutes />
+    </Frame>
   );
 }
 
