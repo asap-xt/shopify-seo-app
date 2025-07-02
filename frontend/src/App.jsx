@@ -1,75 +1,23 @@
-// frontend/src/App.jsx
-// This is the main application component. It sets up the main layout
-// including the navigation menu and top bar, and renders the routes.
-import { Frame, Navigation } from '@shopify/polaris';
-// FINAL AND COMPLETE CORRECTION: All icons have been verified and corrected.
-import {
-  HomeIcon,
-  ProductIcon,
-  NoteIcon, // CORRECTED: Using a different, known-correct icon for Analytics.
-  SettingsIcon,
-  ChatIcon, // Using a known-correct icon for AI Queries
-} from '@shopify/polaris-icons';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import AppRoutes from './Routes';
-import TopBarMarkup from './components/TopBar.jsx';
+// frontend/src/App.jsx (Super-Simple Debug Version)
+// This file is temporarily simplified to its absolute minimum to test rendering.
+
+import { Page, Text } from '@shopify/polaris';
+
 function App() {
-  const { t } = useTranslation();
-  const location = useLocation();
-  const navigate = useNavigate();
-  // Define the navigation menu structure with all corrected icons
-  const navigationMarkup = (
-    <Navigation location={location.pathname}>
-      <Navigation.Section
-        items={[
-          {
-            url: '/',
-            label: t('navigation.dashboard'),
-            icon: HomeIcon,
-            selected: location.pathname === '/',
-            onClick: () => navigate('/'),
-          },
-          {
-            url: '/products',
-            label: t('navigation.products'),
-            icon: ProductIcon, // Corrected from ProductsIcon
-            selected: location.pathname.startsWith('/products'),
-            onClick: () => navigate('/products'),
-          },
-          {
-            url: '/ai-queries',
-            label: t('navigation.ai_queries'),
-            icon: ChatIcon, // Corrected from QuestionIcon
-            selected: location.pathname.startsWith('/ai-queries'),
-            onClick: () => navigate('/ai-queries'),
-          },
-          {
-            url: '/analytics',
-            label: t('navigation.analytics'),
-            icon: NoteIcon, // CORRECTED with a safe icon
-            selected: location.pathname.startsWith('/analytics'),
-            onClick: () => navigate('/analytics'),
-          },
-          {
-            url: '/settings',
-            label: t('navigation.settings'),
-            icon: SettingsIcon,
-            selected: location.pathname.startsWith('/settings'),
-            onClick: () => navigate('/settings'),
-          },
-        ]}
-      />
-    </Navigation>
-  );
+  // We are not using any navigation, frames, or complex components.
+  // We are just trying to render a single page with text.
+  console.log("--- Simple App.jsx is rendering ---");
+
   return (
-    // The Frame component provides the main structure of an embedded Shopify app
-    <Frame
-      topBar={<TopBarMarkup />}
-      navigation={navigationMarkup}
-    >
-      <AppRoutes />
-    </Frame>
+    <Page title="Debug Test">
+      <Text variant="headingLg" as="h1">
+        Здравей, свят!
+      </Text>
+      <p>
+        Ако виждате този текст, значи основната част на приложението работи.
+      </p>
+    </Page>
   );
 }
+
 export default App;
