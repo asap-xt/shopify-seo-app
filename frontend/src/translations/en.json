@@ -1,0 +1,76 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "products": "Products",
+    "ai_queries": "AI Queries",
+    "analytics": "Analytics",
+    "settings": "Settings"
+  },
+  "topbar": {
+    "appName": "AI SEO 2.0"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "recentQueriesTitle": "Recent AI Queries",
+    "analyticsSummaryTitle": "Performance Summary",
+    "topProductsTitle": "Recently Optimized Products"
+  },
+  "planUsage": {
+    "planTitle": "Current Plan",
+    "managePlan": "Manage Plan",
+    "aiQueries": "AI Queries Usage",
+    "productsSynced": "Products Synced"
+  },
+  "recentQueries": {
+    "product": "Product",
+    "provider": "AI Provider",
+    "response": "Response Snippet",
+    "date": "Date",
+    "noQueries": "No recent queries found.",
+    "loading": "Loading queries..."
+  },
+  "products": {
+    "title": "Products",
+    "syncButton": "Sync Products",
+    "syncing": "Syncing...",
+    "syncSuccess": "Product sync started.",
+    "searchPlaceholder": "Search products by title",
+    "optimize": "Optimize with AI",
+    "view": "View"
+  },
+  "settings": {
+    "title": "Settings",
+    "plans": {
+      "title": "Subscription Plans",
+      "currentPlan": "Current Plan",
+      "selectPlan": "Select Plan",
+      "monthly": "/month",
+      "productLimit": "{{count}} products",
+      "queryLimit": "{{count}} AI queries",
+      "syncFrequency": "Sync every {{count}} hours",
+      "providerAccess": "Access to {{count}} AI providers"
+    },
+    "language": {
+        "title": "Language"
+    }
+  },
+  "optimizerModal": {
+    "title": "AI SEO Optimizer for",
+    "selectProvider": "Select AI Provider",
+    "selectContent": "Content to Generate",
+    "metaTitle": "Meta Title",
+    "metaDescription": "Meta Description",
+    "altText": "Image Alt Text",
+    "customInstruction": "Custom Instruction (Optional)",
+    "customInstructionPlaceholder": "e.g., focus on luxury, mention free shipping",
+    "generate": "Generate",
+    "generating": "Generating...",
+    "generatedContent": "Generated Content",
+    "apply": "Apply",
+    "close": "Close"
+  },
+  "general": {
+    "loading": "Loading...",
+    "error": "An error occurred."
+  }
+}

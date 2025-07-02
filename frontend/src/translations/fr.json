@@ -1,0 +1,76 @@
+{
+  "navigation": {
+    "dashboard": "Tableau de bord",
+    "products": "Produits",
+    "ai_queries": "Requêtes IA",
+    "analytics": "Analyses",
+    "settings": "Paramètres"
+  },
+  "topbar": {
+    "appName": "IA SEO 2.0"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "recentQueriesTitle": "Requêtes IA récentes",
+    "analyticsSummaryTitle": "Résumé des performances",
+    "topProductsTitle": "Produits récemment optimisés"
+  },
+  "planUsage": {
+    "planTitle": "Forfait Actuel",
+    "managePlan": "Gérer le forfait",
+    "aiQueries": "Utilisation des requêtes IA",
+    "productsSynced": "Produits synchronisés"
+  },
+  "recentQueries": {
+    "product": "Produit",
+    "provider": "Fournisseur IA",
+    "response": "Extrait de la réponse",
+    "date": "Date",
+    "noQueries": "Aucune requête récente trouvée.",
+    "loading": "Chargement des requêtes..."
+  },
+  "products": {
+    "title": "Produits",
+    "syncButton": "Synchroniser les produits",
+    "syncing": "Synchronisation...",
+    "syncSuccess": "Synchronisation des produits lancée.",
+    "searchPlaceholder": "Rechercher des produits par titre",
+    "optimize": "Optimiser avec l'IA",
+    "view": "Voir"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "plans": {
+      "title": "Forfaits d'abonnement",
+      "currentPlan": "Forfait actuel",
+      "selectPlan": "Sélectionner le forfait",
+      "monthly": "/mois",
+      "productLimit": "{{count}} produits",
+      "queryLimit": "{{count}} requêtes IA",
+      "syncFrequency": "Synchro toutes les {{count}} heures",
+      "providerAccess": "Accès à {{count}} fournisseurs IA"
+    },
+    "language": {
+        "title": "Langue"
+    }
+  },
+  "optimizerModal": {
+    "title": "Optimiseur SEO IA pour",
+    "selectProvider": "Sélectionner un fournisseur IA",
+    "selectContent": "Contenu à générer",
+    "metaTitle": "Titre méta",
+    "metaDescription": "Méta description",
+    "altText": "Texte alternatif de l'image",
+    "customInstruction": "Instruction personnalisée (Facultatif)",
+    "customInstructionPlaceholder": "ex: mettre l'accent sur le luxe, mentionner la livraison gratuite",
+    "generate": "Générer",
+    "generating": "Génération...",
+    "generatedContent": "Contenu généré",
+    "apply": "Appliquer",
+    "close": "Fermer"
+  },
+  "general": {
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue."
+  }
+}

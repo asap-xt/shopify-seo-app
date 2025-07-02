@@ -1,0 +1,76 @@
+{
+  "navigation": {
+    "dashboard": "Panel de control",
+    "products": "Productos",
+    "ai_queries": "Consultas de IA",
+    "analytics": "Analíticas",
+    "settings": "Configuración"
+  },
+  "topbar": {
+    "appName": "IA SEO 2.0"
+  },
+  "dashboard": {
+    "title": "Panel de control",
+    "recentQueriesTitle": "Consultas de IA recientes",
+    "analyticsSummaryTitle": "Resumen de rendimiento",
+    "topProductsTitle": "Productos optimizados recientemente"
+  },
+  "planUsage": {
+    "planTitle": "Plan Actual",
+    "managePlan": "Gestionar plan",
+    "aiQueries": "Uso de consultas de IA",
+    "productsSynced": "Productos sincronizados"
+  },
+  "recentQueries": {
+    "product": "Producto",
+    "provider": "Proveedor de IA",
+    "response": "Fragmento de respuesta",
+    "date": "Fecha",
+    "noQueries": "No se encontraron consultas recientes.",
+    "loading": "Cargando consultas..."
+  },
+  "products": {
+    "title": "Productos",
+    "syncButton": "Sincronizar productos",
+    "syncing": "Sincronizando...",
+    "syncSuccess": "Sincronización de productos iniciada.",
+    "searchPlaceholder": "Buscar productos por título",
+    "optimize": "Optimizar con IA",
+    "view": "Ver"
+  },
+  "settings": {
+    "title": "Configuración",
+    "plans": {
+      "title": "Planes de suscripción",
+      "currentPlan": "Plan actual",
+      "selectPlan": "Seleccionar plan",
+      "monthly": "/mes",
+      "productLimit": "{{count}} productos",
+      "queryLimit": "{{count}} consultas de IA",
+      "syncFrequency": "Sincronización cada {{count}} horas",
+      "providerAccess": "Acceso a {{count}} proveedores de IA"
+    },
+     "language": {
+        "title": "Idioma"
+    }
+  },
+  "optimizerModal": {
+    "title": "Optimizador SEO con IA para",
+    "selectProvider": "Seleccionar proveedor de IA",
+    "selectContent": "Contenido a generar",
+    "metaTitle": "Meta Título",
+    "metaDescription": "Meta Descripción",
+    "altText": "Texto alternativo de imagen",
+    "customInstruction": "Instrucción personalizada (Opcional)",
+    "customInstructionPlaceholder": "p. ej., centrarse en el lujo, mencionar el envío gratis",
+    "generate": "Generar",
+    "generating": "Generando...",
+    "generatedContent": "Contenido generado",
+    "apply": "Aplicar",
+    "close": "Cerrar"
+  },
+  "general": {
+    "loading": "Cargando...",
+    "error": "Ocurrió un error."
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "products": "Produkte",
+    "ai_queries": "KI-Anfragen",
+    "analytics": "Analyse",
+    "settings": "Einstellungen"
+  },
+  "topbar": {
+    "appName": "KI SEO 2.0"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "recentQueriesTitle": "Letzte KI-Anfragen",
+    "analyticsSummaryTitle": "Leistungsübersicht",
+    "topProductsTitle": "Kürzlich optimierte Produkte"
+  },
+  "planUsage": {
+    "planTitle": "Aktueller Plan",
+    "managePlan": "Plan verwalten",
+    "aiQueries": "Nutzung von KI-Anfragen",
+    "productsSynced": "Synchronisierte Produkte"
+  },
+  "recentQueries": {
+    "product": "Produkt",
+    "provider": "KI-Anbieter",
+    "response": "Antwort-Ausschnitt",
+    "date": "Datum",
+    "noQueries": "Keine aktuellen Anfragen gefunden.",
+    "loading": "Anfragen werden geladen..."
+  },
+  "products": {
+    "title": "Produkte",
+    "syncButton": "Produkte synchronisieren",
+    "syncing": "Synchronisieren...",
+    "syncSuccess": "Produktsynchronisation gestartet.",
+    "searchPlaceholder": "Produkte nach Titel suchen",
+    "optimize": "Mit KI optimieren",
+    "view": "Ansehen"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "plans": {
+      "title": "Abonnementpläne",
+      "currentPlan": "Aktueller Plan",
+      "selectPlan": "Plan auswählen",
+      "monthly": "/Monat",
+      "productLimit": "{{count}} Produkte",
+      "queryLimit": "{{count}} KI-Anfragen",
+      "syncFrequency": "Synchronisierung alle {{count}} Stunden",
+      "providerAccess": "Zugriff auf {{count}} KI-Anbieter"
+    },
+    "language": {
+        "title": "Sprache"
+    }
+  },
+  "optimizerModal": {
+    "title": "KI-SEO-Optimierer für",
+    "selectProvider": "KI-Anbieter auswählen",
+    "selectContent": "Zu generierender Inhalt",
+    "metaTitle": "Meta-Titel",
+    "metaDescription": "Meta-Beschreibung",
+    "altText": "Bild-Alt-Text",
+    "customInstruction": "Benutzerdefinierte Anweisung (Optional)",
+    "customInstructionPlaceholder": "z.B. Fokus auf Luxus, kostenlosen Versand erwähnen",
+    "generate": "Generieren",
+    "generating": "Generierung...",
+    "generatedContent": "Generierter Inhalt",
+    "apply": "Anwenden",
+    "close": "Schließen"
+  },
+  "general": {
+    "loading": "Wird geladen...",
+    "error": "Ein Fehler ist aufgetreten."
+  }
+}

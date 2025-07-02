@@ -1,0 +1,48 @@
+# docker-compose.yml for local development
+# This file helps run the app and a MongoDB instance locally.
+# It is NOT used by Railway for deployment.
+
+version: '3.8'
+services:
+  # The application service (backend + frontend)
+  app:
+    container_name: shopify-ai-seo-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    # Load environment variables from the .env file in the root directory
+    env_file:
+      - .env
+    # Override some variables for local development
+    environment:
+      - NODE_ENV=development
+      - HOST=http://localhost:8081
+      - MONGO_URI=mongodb://mongo:27017/ai-seo-app
+    depends_on:
+      - mongo
+    volumes:
+      # Mount source code for live-reloading with nodemon
+      # Note: This requires nodemon to be run inside the container
+      - ./backend:/app/backend
+      - ./frontend:/app/frontend
+      # Anonymous volume to prevent local node_modules from overwriting container's
+      - /app/backend/node_modules
+      - /app/frontend/node_modules
+    # Use nodemon for development to auto-restart on file changes
+    command: npm run dev --prefix backend
+
+  # The MongoDB database service
+  mongo:
+    container_name: shopify-ai-seo-db
+    image: mongo:6.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    restart: always
+
+volumes:
+  # Persistent volume for MongoDB data
+  mongodb_data:
