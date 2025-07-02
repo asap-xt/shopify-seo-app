@@ -22,10 +22,12 @@ function App() {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  // This is the most robust way to get the config.
-  // It reads directly from the browser's URL when the component first loads.
+  // FINAL CORRECTION:
+  // The dependency array for useMemo now includes 'location.search'.
+  // This ensures that the configuration is re-calculated whenever the URL parameters change,
+  // which is crucial for when the app is loaded from the Shopify Admin Apps list.
   const appBridgeConfig = useMemo(() => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(location.search);
     const host = params.get('host');
     const apiKey = import.meta.env.VITE_SHOPIFY_API_KEY;
 
@@ -42,7 +44,7 @@ function App() {
       }
     }
     return null;
-  }, []); // The empty dependency array ensures this runs only once.
+  }, [location.search]); // The dependency is added here.
 
   // If the app is not embedded in Shopify, it will not have the 'host' parameter.
   if (!appBridgeConfig) {
