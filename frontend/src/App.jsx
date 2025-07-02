@@ -1,22 +1,22 @@
-// frontend/src/App.jsx (Super-Simple Debug Version)
-// This file is temporarily simplified to its absolute minimum to test rendering.
+// frontend/src/App.jsx (Absolute Minimum Debug Version)
+// This file is simplified to have ZERO dependencies.
 
-import { Page, Text } from '@shopify/polaris';
+import React from 'react';
 
 function App() {
-  // We are not using any navigation, frames, or complex components.
-  // We are just trying to render a single page with text.
-  console.log("--- Simple App.jsx is rendering ---");
+  // This log MUST appear in the browser console if the component renders.
+  console.log("--- Absolute Minimum App.jsx is rendering ---");
 
   return (
-    <Page title="Debug Test">
-      <Text variant="headingLg" as="h1">
-        Здравей, свят!
-      </Text>
+    <div style={{ padding: '40px', fontFamily: 'sans-serif', border: '5px solid red', margin: '20px', backgroundColor: 'white' }}>
+      <h1 style={{ fontSize: '24px' }}>Диагностичен Тест</h1>
       <p>
-        Ако виждате този текст, значи основната част на приложението работи.
+        Ако виждате този текст с червена рамка, значи React работи.
       </p>
-    </Page>
+      <p>
+        Проблемът е в един от "Provider" компонентите (AppBridge, Polaris, или Router), които обвиват това приложение.
+      </p>
+    </div>
   );
 }
 
