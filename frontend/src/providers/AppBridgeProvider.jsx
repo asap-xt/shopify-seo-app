@@ -20,9 +20,7 @@ function AppBridgeProvider({ children }) {
     if (apiKey) {
       return {
         apiKey,
-        // If the host is present in the URL (during OAuth), we use it.
-        // If not (when opened from the Apps list), App Bridge will detect it.
-        host: host ? atob(host) : undefined,
+        host: host || undefined,
         forceRedirect: true,
       };
     }
