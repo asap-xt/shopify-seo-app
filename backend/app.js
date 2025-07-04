@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
+import fs from 'fs';
 // Import local modules
 import { errorHandler, notFound } from './middleware/errorHandler.js';
 import { verifyShopifyWebhook } from './middleware/shopifyWebhook.js';
@@ -53,8 +54,9 @@ if (process.env.NODE_ENV === 'production') {
     
     // Catch-all route for SPA
     app.get('*', (req, res) => {
-        console.log(`[FRONTEND SERVE] Serving index.html for path: ${req.originalUrl}`);
-        res.sendFile(path.resolve(frontendDistPath, 'index.html'));
+        const indexPath = path.resolve(frontendDistPath, 'index.html');
+        console.log(`[FRONTEND SERVE] Serving index.html for path: ${req.originalUrl}, indexPath: ${indexPath}, exists: ${fs.existsSync(indexPath)}`);
+        res.sendFile(indexPath);
     });
 } else {
     // Development: Proxy to Vite dev server
