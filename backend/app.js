@@ -43,22 +43,33 @@ app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/shop', shopRoutes);
 app.use('/api/analytics', analyticsRoutes);
-// --- Frontend Serving (for Production) ---
+// --- Frontend Serving ---
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 if (process.env.NODE_ENV === 'production') {
-    // FINAL, FINAL CORRECTION:
-    // In the final Docker image, __dirname is /app. The frontend assets are in /app/frontend/dist.
-    // Therefore, the correct path is a direct join.
+    // Production: Serve built frontend
     const frontendDistPath = path.join(__dirname, 'frontend', 'dist');
     app.use(express.static(frontendDistPath));
-    // The catch-all route now correctly resolves the path to index.html.
+    
+    // Catch-all route for SPA
     app.get('*', (req, res) => {
         res.sendFile(path.resolve(frontendDistPath, 'index.html'));
     });
 } else {
-    app.get('/', (req, res) => {
-        res.send('API is running in development mode...');
+    // Development: Proxy to Vite dev server
+    import('http-proxy-middleware').then(({ createProxyMiddleware }) => {
+        app.use('/', createProxyMiddleware({
+            target: 'http://localhost:3000',
+            changeOrigin: true,
+            ws: true, // Enable WebSocket proxy for HMR
+            logLevel: 'debug'
+        }));
+    }).catch(err => {
+        console.error('Failed to load proxy middleware:', err);
+        // Fallback: serve a simple message
+        app.get('/', (req, res) => {
+            res.send('Development mode: Please start the frontend with "npm run dev" in the frontend directory');
+        });
     });
 }
 // --- Error Handling Middleware (must be last) ---

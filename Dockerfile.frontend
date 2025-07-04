@@ -1,0 +1,19 @@
+# Dockerfile.frontend - For frontend development only
+FROM node:18.18.0-slim
+
+WORKDIR /app
+
+# Copy package files first to leverage Docker's cache
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy source code
+COPY . .
+
+# Expose Vite dev server port
+EXPOSE 3000
+
+# Start Vite dev server
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"] 

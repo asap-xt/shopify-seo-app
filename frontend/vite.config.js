@@ -5,15 +5,14 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   
-  // This section is for the development server and is not used by Railway,
-  // but it's good practice to have it correctly configured.
-  // The syntax error was likely a missing comma or brace here.
+  // Development server configuration
   server: {
-    port: 3000, // You can define a specific port for the dev server
+    port: 3000,
+    host: '0.0.0.0', // Allow external access (needed for Docker)
     proxy: {
       // Any request starting with /api will be forwarded to the backend
       '/api': {
-        target: 'http://localhost:8081', // Your backend server URL
+        target: 'http://backend:8081', // Use service name in Docker
         changeOrigin: true,
         secure: false,
       },

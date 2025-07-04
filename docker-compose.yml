@@ -4,9 +4,9 @@
 
 version: '3.8'
 services:
-  # The application service (backend + frontend)
-  app:
-    container_name: shopify-ai-seo-app
+  # The backend service
+  backend:
+    container_name: shopify-ai-seo-backend
     build:
       context: .
       dockerfile: Dockerfile
@@ -24,14 +24,30 @@ services:
       - mongo
     volumes:
       # Mount source code for live-reloading with nodemon
-      # Note: This requires nodemon to be run inside the container
-      - ./backend:/app/backend
-      - ./frontend:/app/frontend
+      - ./backend:/app
       # Anonymous volume to prevent local node_modules from overwriting container's
-      - /app/backend/node_modules
-      - /app/frontend/node_modules
+      - /app/node_modules
     # Use nodemon for development to auto-restart on file changes
-    command: npm run dev --prefix backend
+    command: npm run dev
+
+  # The frontend service (Vite dev server)
+  frontend:
+    container_name: shopify-ai-seo-frontend
+    build:
+      context: ./frontend
+      dockerfile: ../Dockerfile.frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - VITE_SHOPIFY_API_KEY=${SHOPIFY_API_KEY}
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm run dev
+    depends_on:
+      - backend
 
   # The MongoDB database service
   mongo:
