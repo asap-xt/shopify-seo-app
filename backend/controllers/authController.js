@@ -47,6 +47,12 @@ const handleShopifyCallback = asyncHandler(async (req, res) => {
 
     logger.info(`[OAUTH] Callback triggered. Query: ${JSON.stringify(req.query)}, Headers: ${JSON.stringify(req.headers)}`);
 
+    // Проверка за липсващи параметри
+    if (!req.query.shop || !req.query.host) {
+      logger.error(`[OAUTH] Missing shop or host in callback. Query: ${JSON.stringify(req.query)}`);
+      return res.status(400).send("Missing 'shop' or 'host' parameter in OAuth callback. This endpoint should only be called by Shopify during app installation.");
+    }
+
     try {
         logger.info('--- [1] Callback Received. Processing...');
         const shopifyClient = getShopifyClient();
