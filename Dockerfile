@@ -24,6 +24,9 @@ COPY frontend/ .
 # The build output will be created in /app/dist.
 RUN VITE_SHOPIFY_API_KEY=$VITE_SHOPIFY_API_KEY npm run build
 
+# Debug: Покажи съдържанието на frontend/dist в Railway logs
+RUN ls -l ./frontend/dist
+
 # Stage 2: Backend Builder
 # Prepares the backend code and production dependencies.
 FROM node:18.18.0-slim AS backend-builder

@@ -53,6 +53,7 @@ if (process.env.NODE_ENV === 'production') {
     
     // Catch-all route for SPA
     app.get('*', (req, res) => {
+        console.log(`[FRONTEND SERVE] Serving index.html for path: ${req.originalUrl}`);
         res.sendFile(path.resolve(frontendDistPath, 'index.html'));
     });
 } else {
