@@ -41,8 +41,11 @@ const handleShopifyCallback = asyncHandler(async (req, res) => {
     // Проверка за ботове - НАЙ-ОТГОРЕ!
     const userAgent = req.headers['user-agent'] || '';
     if (/bot|facebookexternalhit|Twitterbot|crawler|spider|robot|crawling/i.test(userAgent)) {
+      logger.warn(`[OAUTH] Bot detected: ${userAgent}`);
       return res.status(400).send('OAuth callback initiated by bot is not allowed.');
     }
+
+    logger.info(`[OAUTH] Callback triggered. Query: ${JSON.stringify(req.query)}, Headers: ${JSON.stringify(req.headers)}`);
 
     try {
         logger.info('--- [1] Callback Received. Processing...');
@@ -55,7 +58,7 @@ const handleShopifyCallback = asyncHandler(async (req, res) => {
 
         const { session } = callback;
         const { shop: shopifyDomain, accessToken } = session;
-        logger.info(`--- [3] Session extracted for shop: ${shopifyDomain}`);
+        logger.info(`--- [3] Session extracted for shop: ${shopifyDomain}, accessToken: ${!!accessToken}`);
 
         let shop = await Shop.findOne({ shopifyDomain });
         logger.info(`--- [4] Database checked. Shop exists: ${!!shop}`);
@@ -63,7 +66,7 @@ const handleShopifyCallback = asyncHandler(async (req, res) => {
         const client = new shopifyClient.clients.Rest({ session });
         const shopDataResponse = await client.get({ path: 'shop' });
         const shopData = shopDataResponse.body.shop;
-        logger.info(`--- [5] Fetched shop data from Shopify API.`);
+        logger.info(`--- [5] Fetched shop data from Shopify API: ${JSON.stringify(shopData)}`);
 
         if (shop) {
           shop.accessToken = accessToken;
@@ -85,14 +88,18 @@ const handleShopifyCallback = asyncHandler(async (req, res) => {
         }
 
         const host = req.query.host;
+        if (!host) {
+          logger.error(`[OAUTH] Missing host parameter in callback. Query: ${JSON.stringify(req.query)}`);
+          return res.status(400).send("Missing 'host' parameter in OAuth callback. Please ensure the app is launched from the Shopify Admin.");
+        }
         const redirectUrl = `/?shop=${shopifyDomain}&host=${host}`;
-        logger.info(`--- [9] Preparing to redirect to: ${redirectUrl}`);
+        logger.info(`--- [9] Preparing to redirect to: ${redirectUrl}, host: ${host}, shop: ${shopifyDomain}`);
         res.redirect(redirectUrl);
 
     } catch (error) {
-        // This will catch the exact error and log it.
         logger.error('--- [FATAL ERROR] An error occurred during the callback process ---');
         logger.error(error);
+        logger.error(`[OAUTH] Query: ${JSON.stringify(req.query)}, Headers: ${JSON.stringify(req.headers)}`);
         res.status(500).send("An internal error occurred during installation. Please try again.");
     }
 });
