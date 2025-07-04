@@ -38,6 +38,12 @@ const handleShopifyAuth = asyncHandler(async (req, res) => {
 
 // --- THE PROBLEM IS INSIDE THIS FUNCTION ---
 const handleShopifyCallback = asyncHandler(async (req, res) => {
+    // Проверка за ботове - НАЙ-ОТГОРЕ!
+    const userAgent = req.headers['user-agent'] || '';
+    if (/bot|facebookexternalhit|Twitterbot|crawler|spider|robot|crawling/i.test(userAgent)) {
+      return res.status(400).send('OAuth callback initiated by bot is not allowed.');
+    }
+
     try {
         logger.info('--- [1] Callback Received. Processing...');
         const shopifyClient = getShopifyClient();
