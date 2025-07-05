@@ -3,23 +3,38 @@
 
 import { Provider } from '@shopify/app-bridge-react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Page, Spinner, Banner } from '@shopify/polaris';
-import { useMemo, useEffect } from 'react';
+import { Page, Spinner, Banner, Card, TextContainer } from '@shopify/polaris';
+import { useMemo, useEffect, useState } from 'react';
 
-// Компонент за автоматичен OAuth redirect
+// Компонент за автоматичен OAuth redirect с fallback
 function OAuthRedirector() {
   const location = useLocation();
+  const [missingShop, setMissingShop] = useState(false);
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const shop = params.get('shop');
-    // Ако няма shop, не правим нищо (или може да покажем грешка)
-    if (!shop) return;
-    // Ако няма host, значи не сме минали през OAuth - стартираме flow-а
     const host = params.get('host');
+    if (!shop) {
+      setMissingShop(true);
+      return;
+    }
     if (!host) {
       window.location.href = `/api/auth/shopify?shop=${shop}`;
     }
   }, [location]);
+  if (missingShop) {
+    return (
+      <Page>
+        <Card sectioned>
+          <TextContainer>
+            <Banner status="critical" title="Missing shop parameter">
+              <p>This app must be launched from the Shopify Admin. Please open it from your <b>Apps</b> list in Shopify.</p>
+            </Banner>
+          </TextContainer>
+        </Card>
+      </Page>
+    );
+  }
   return null;
 }
 
