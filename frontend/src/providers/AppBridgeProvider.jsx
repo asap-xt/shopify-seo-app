@@ -4,7 +4,24 @@
 import { Provider } from '@shopify/app-bridge-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Page, Spinner, Banner } from '@shopify/polaris';
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
+
+// Компонент за автоматичен OAuth redirect
+function OAuthRedirector() {
+  const location = useLocation();
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const shop = params.get('shop');
+    // Ако няма shop, не правим нищо (или може да покажем грешка)
+    if (!shop) return;
+    // Ако няма host, значи не сме минали през OAuth - стартираме flow-а
+    const host = params.get('host');
+    if (!host) {
+      window.location.href = `/api/auth/shopify?shop=${shop}`;
+    }
+  }, [location]);
+  return null;
+}
 
 function AppBridgeProvider({ children }) {
   const location = useLocation();
@@ -43,6 +60,7 @@ function AppBridgeProvider({ children }) {
   // Once the config is ready, render the App Bridge Provider with the main app inside.
   return (
     <Provider config={appBridgeConfig} router={{ location, navigate }}>
+      <OAuthRedirector />
       {children}
     </Provider>
   );
